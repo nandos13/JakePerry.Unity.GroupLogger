@@ -8,5 +8,12 @@
     "name": "Jake Perry",
 	"email": "jakeperrygamedev@gmail.com",
 	"url": "https://github.com/nandos13/JakePerry.Unity.GroupLogger"
+  },
+  "samples": {
+    {
+	  "displayName": "Code Example",
+	  "description": "Contains a simple code example showing how the GroupLogger can be used.",
+	  "path": "Samples~/Example"
+	}
   }
 }
