@@ -1,0 +1,12 @@
+{
+  "name": "au.com.jakeperry.unity.packagelogger",
+  "version": "1.0.0",
+  "displayName": "Package Logger",
+  "description": "A simple package that provides a means to configure logs in your unity package.",
+  "unity": "2018.4",
+  "author": {
+    "name": "Jake Perry",
+	"email": "jakeperrygamedev@gmail.com",
+	"url": "https://github.com/nandos13/JakePerry.Unity.PackageLogger"
+  }
+}
