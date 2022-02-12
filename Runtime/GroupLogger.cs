@@ -10,7 +10,7 @@ namespace JakePerry.Unity
     /// Additionally, logs of any <see cref="LogType"/> can be enabled or disabled
     /// for the log group independent of the underlying <see cref="ILogger"/>.
     /// </summary>
-    public sealed class PackageLogger
+    public sealed class GroupLogger
     {
         private readonly string m_id;
 
@@ -25,7 +25,7 @@ namespace JakePerry.Unity
         /// <param name="packageName">
         /// [Optional] Short identifier prepended to log messages.
         /// </param>
-        public PackageLogger(string groupId = null)
+        public GroupLogger(string groupId = null)
         {
             if (!(groupId is null))
             {
