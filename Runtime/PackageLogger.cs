@@ -3,24 +3,44 @@ using UnityEngine;
 
 namespace JakePerry.Unity
 {
+    /// <summary>
+    /// This class can be used to group log messages from a particular
+    /// package, plugin, code system, etc with the option to prepend all
+    /// log messages with a common identifier.
+    /// Additionally, logs of any <see cref="LogType"/> can be enabled or disabled
+    /// for the log group independent of the underlying <see cref="ILogger"/>.
+    /// </summary>
     public sealed class PackageLogger
     {
-        private readonly string m_packageName;
-        private readonly bool m_prependLogs;
+        private readonly string m_id;
 
-        private byte m_logTypes = 255;
+        private byte m_logTypes = byte.MaxValue;
 
-        public string PackageName => m_packageName;
+        /// <summary>
+        /// The identifier prepended to log messages,
+        /// or <see langword="null"/> if none was specified.
+        /// </summary>
+        public string GroupId => m_id;
 
         /// <param name="packageName">
-        /// [Optional] Short package identifier prepended to log messages.
+        /// [Optional] Short identifier prepended to log messages.
         /// </param>
-        public PackageLogger(string packageName = null)
+        public PackageLogger(string groupId = null)
         {
-            m_packageName = packageName?.Trim();
-            m_prependLogs = !string.IsNullOrEmpty(m_packageName);
+            if (!(groupId is null))
+            {
+                groupId = groupId.Trim();
+
+                if (groupId.Length > 0)
+                    m_id = groupId;
+            }
         }
 
+        /// <summary>
+        /// Converts a <see cref="LogType"/> value to an integer in range [0-4]
+        /// to be used in bitwise operations with <see cref="m_logTypes"/>.
+        /// Guards against invalid values, defaults to <see cref="LogType.Log"/>.
+        /// </summary>
         private static int GetByteOffset(LogType type)
         {
             const int min = (int)LogType.Error; // 0
@@ -34,11 +54,17 @@ namespace JakePerry.Unity
                 : index;
         }
 
+        /// <summary>
+        /// Indicates the enable state of the given <see cref="LogType"/> for this log group.
+        /// </summary>
         public bool IsLogTypeEnabled(LogType type)
         {
             return (m_logTypes & (1 << GetByteOffset(type))) != 0;
         }
 
+        /// <summary>
+        /// Set the enable state of the given <see cref="LogType"/> for this log group.
+        /// </summary>
         public void SetLogTypeEnabled(LogType type, bool enabled)
         {
             if (enabled)
@@ -47,13 +73,21 @@ namespace JakePerry.Unity
                 m_logTypes = (byte)(m_logTypes | ~(1 << GetByteOffset(type)));
         }
 
+        /// <summary>
+        /// Set the enable state of all <see cref="LogType"/> values for this log group.
+        /// </summary>
+        public void SetAllLogTypesEnabled(bool enabled)
+        {
+            m_logTypes = enabled ? byte.MaxValue : byte.MinValue;
+        }
+
         private void DoLog(LogType logType, object message, UnityEngine.Object context)
         {
             if (!IsLogTypeEnabled(logType))
                 return;
 
-            if (m_prependLogs)
-                message = $"[{m_packageName}] {message}";
+            if (!(m_id is null))
+                message = $"[{m_id}] {message}";
 
             if (context is null)
             {
